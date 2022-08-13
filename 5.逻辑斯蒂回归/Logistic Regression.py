@@ -6,7 +6,6 @@ by SimonYang
 
 import torch
 
-
 x_data = torch.Tensor([[1.0], [2.0], [3.0]])
 y_data = torch.Tensor([[0.0], [0.0], [1.0]])
 
