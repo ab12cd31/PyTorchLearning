@@ -1,5 +1,5 @@
 """
-PyCharm Multiple Dimension Input
+用ReLU激活
 2022.08.13
 by SimonYang
 """
@@ -18,11 +18,12 @@ class Model(torch.nn.Module):
         self.Linear1 = torch.nn.Linear(8, 6)
         self.Linear2 = torch.nn.Linear(6, 4)
         self.Linear3 = torch.nn.Linear(4, 1)
+        self.activate = torch.nn.ReLU()
         self.sigmoid = torch.nn.Sigmoid()
 
     def forward(self, x):
-        x = self.sigmoid(self.Linear1(x))
-        x = self.sigmoid(self.Linear2(x))
+        x = self.activate(self.Linear1(x))
+        x = self.activate(self.Linear2(x))
         x = self.sigmoid(self.Linear3(x))
         return x
 
@@ -34,7 +35,7 @@ optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
 epoch_list = []
 loss_list = []
 
-for epoch in range(100):
+for epoch in range(10000):
     y_pred = model(x_data)
     loss = criterion(y_pred, y_data)
     print(epoch, loss.item())
@@ -47,7 +48,7 @@ for epoch in range(100):
     optimizer.step()
 
 plt.plot(epoch_list, loss_list)
-plt.title('Sigmoid',fontsize=20)
+plt.title('ReLU+Sigmoid',fontsize=20)
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.show()
