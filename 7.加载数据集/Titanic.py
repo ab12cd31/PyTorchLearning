@@ -1,21 +1,28 @@
 """
-PyCharm DataSet and DataLoader
+PyCharm Titanic
 2022.08.14
 by SimonYang
 """
 
 import numpy as np
 import torch
+import torch.nn
 from torch.utils.data import Dataset, DataLoader
-import matplotlib.pyplot as plt
 
 
-class DiabetesDataset(Dataset):
+class SurviveDataset(Dataset):
+
     def __init__(self, filepath):
-        xy = np.loadtxt(filepath, delimiter=',', dtype=np.float32)
-        self.len = xy.shape[0]
-        self.x_data = torch.from_numpy(xy[:, :-1])
-        self.y_data = torch.from_numpy(xy[:, [-1]])
+        x = np.loadtxt(filepath, delimiter=',', dtype=np.float32, usecols=(2, 5, 6, 7, 8, 10, 12))
+        # 上面只取有效特征，类似人名，票号等唯一特征对训练没用就没取。
+        y = np.loadtxt(filepath, delimiter=',', dtype=np.float32, usecols=1)
+        # 'delimiter'为分隔符
+        y = y[:, np.newaxis]
+        # 这里增加一维，不然计算loss的时候维度不同会报错
+
+        self.x_data = torch.from_numpy(x)
+        self.y_data = torch.from_numpy(y)
+        self.len = x.shape[0]
 
     def __getitem__(self, index):
         return self.x_data[index], self.y_data[index]
@@ -24,7 +31,7 @@ class DiabetesDataset(Dataset):
         return self.len
 
 
-dataset = DiabetesDataset('diabetes.csv')
+dataset = SurviveDataset('train.csv')
 train_loader = DataLoader(dataset=dataset,
                           batch_size=32,
                           shuffle=True,
@@ -35,9 +42,9 @@ class Model(torch.nn.Module):
 
     def __init__(self):
         super(Model, self).__init__()
-        self.Linear1 = torch.nn.Linear(8, 6)
-        self.Linear2 = torch.nn.Linear(6, 4)
-        self.Linear3 = torch.nn.Linear(4, 1)
+        self.Linear1 = torch.nn.Linear(7, 5)
+        self.Linear2 = torch.nn.Linear(5, 3)
+        self.Linear3 = torch.nn.Linear(3, 1)
         self.sigmoid = torch.nn.Sigmoid()
 
     def forward(self, x):
@@ -49,7 +56,7 @@ class Model(torch.nn.Module):
 
 model = Model()
 
-criterion = torch.nn.BCELoss(reduction='mean')
+criterion = torch.nn.BCELoss(reduction='sum')
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
 if __name__ == '__main__':
