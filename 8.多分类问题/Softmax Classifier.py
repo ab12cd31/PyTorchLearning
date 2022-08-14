@@ -9,6 +9,7 @@ from torchvision import transforms, datasets
 from torch.utils.data import DataLoader
 import torch.optim as optim
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
 
 batch_size = 64
 transform = transforms.Compose([
@@ -71,6 +72,7 @@ def train(epoch):
         running_loss += loss.item()
         if batch_idx % 300 == 299:
             print('[%d, %5d] loss: %3f' % (epoch + 1, batch_idx + 1, running_loss / 300))
+            loss_list.append(running_loss / 300)
             running_loss = 0.0
 
 
@@ -85,9 +87,27 @@ def test():
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
     print('Accuracy on test set: %d %%' % (100 * correct / total))
+    accurate_list.append(correct / total * 100)
 
 
 if __name__ == '__main__':
+    loss_list = []
+    accurate_list = []
+
     for epoch in range(10):
         train(epoch)
         test()
+
+    num_list = [i for i in range(len(loss_list))]
+    plt.plot(num_list, loss_list)
+    plt.xlabel('i')
+    plt.title('Loss', fontsize=20)
+    plt.ylabel('loss')
+    plt.show()
+
+    num_list = [i for i in range(len(accurate_list))]
+    plt.plot(num_list, accurate_list)
+    plt.xlabel('i')
+    plt.title('Accurate', fontsize=20)
+    plt.ylabel('accurate')
+    plt.show()
