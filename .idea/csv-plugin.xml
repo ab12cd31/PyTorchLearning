@@ -10,10 +10,10 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\6.处理多维特征的输入\diabetes.csv.gz">
+        <entry key="\7.加载数据集\diabetes.csv">
           <value>
             <Attribute>
-              <option name="separator" value=":" />
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
