@@ -66,7 +66,3 @@ if __name__ == '__main__':
 
             optimizer.step()
 
-plt.plot(epoch_list, loss_list)
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.show()
