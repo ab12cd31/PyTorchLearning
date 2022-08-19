@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\dataset\mnist\MNIST\raw\t10k-images-idx3-ubyte.gz">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
