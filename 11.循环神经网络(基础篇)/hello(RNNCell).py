@@ -5,6 +5,7 @@ by SimonYang
 """
 
 import torch
+import matplotlib.pyplot as plt
 
 input_size = 4
 hidden_size = 4
@@ -45,6 +46,9 @@ net = Model(input_size, hidden_size, batch_size)
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(net.parameters(), lr=0.1)
 
+epoch_list = []
+loss_list = []
+
 for epoch in range(15):
     loss = 0
     optimizer.zero_grad()
@@ -53,8 +57,17 @@ for epoch in range(15):
     for input, label in zip(inputs, labels):
         hidden = net(input, hidden)
         loss += criterion(hidden, label)
-        _, idx = hidden.max(dim=1) #输出最有可能的值
+        _, idx = hidden.max(dim=1)  # 输出最有可能的值
         print(idx2char[idx.item()], end='')
     loss.backward()
     optimizer.step()
+    loss_list.append(loss.item())
+    epoch_list.append(epoch + 1)
     print(',Epoch [%d/15] loss=%.4f' % (epoch + 1, loss.item()))
+
+plt.plot(epoch_list, loss_list)
+plt.xlabel('epoch')
+plt.title('Loss', fontsize=20)
+plt.ylabel('loss')
+plt.grid(ls='--')
+plt.show()

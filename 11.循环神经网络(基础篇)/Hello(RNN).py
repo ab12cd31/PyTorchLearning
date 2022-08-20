@@ -5,19 +5,20 @@ by SimonYang
 """
 
 import torch
+import matplotlib.pyplot as plt
 
-num_class = 4  # 4个类别，
-input_size = 4  # 输入维度
-hidden_size = 8  # 隐层输出维度，有8个隐层
-embedding_size = 10  # 嵌入到10维空间
-num_layers = 2  # 2层的RNN
+num_class = 4
+input_size = 4
+hidden_size = 8
+embedding_size = 10
+num_layers = 2
 batch_size = 1
-seq_len = 5  # 序列长度5
+seq_len = 5
 
 idx2char = ['e', 'h', 'l', 'o']
-x_data = [[1, 0, 2, 2, 3]]  # (batch, seq_len) list
-y_data = [3, 1, 2, 3, 2]  # (batch * seq_len)
-inputs = torch.LongTensor(x_data)  # tensor
+x_data = [[1, 0, 2, 2, 3]]
+y_data = [3, 1, 2, 3, 2]
+inputs = torch.LongTensor(x_data)
 labels = torch.LongTensor(y_data)
 
 
@@ -33,15 +34,17 @@ class Model(torch.nn.Module):
 
     def forward(self, x):
         hidden = torch.zeros(num_layers, x.size(0), hidden_size)
-        x = self.emb(x)  # (batch,seqlen,embeddingSize)
+        x = self.emb(x)
         x, _ = self.rnn(x, hidden)
         x = self.fc(x)
-        return x.view(-1, num_class)  # 矩阵（batchsize×seqlen, numclass）
+        return x.view(-1, num_class)
 
 
 net = Model()
 critirion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(net.parameters(), lr=0.05)
+epoch_list = []
+loss_list = []
 
 for epoch in range(15):
     optimizer.zero_grad()
@@ -51,6 +54,16 @@ for epoch in range(15):
     optimizer.step()
     _, idx = outputs.max(dim=1)
     idx = idx.data.numpy()
+    loss_list.append(loss.item())
+    epoch_list.append(epoch + 1)
     print('idx', idx)
-    print('Pridected:', ''.join([idx2char[x] for x in idx]), end='')  # end是不自动换行，''.join是连接字符串数组
+    print('Pridected:', ''.join([idx2char[x] for x in idx]), end='')
     print(',Epoch [%d/15] loss = %.3f' % (epoch + 1, loss.item()))
+
+
+plt.plot(epoch_list, loss_list)
+plt.xlabel('epoch')
+plt.title('Loss', fontsize=20)
+plt.ylabel('loss')
+plt.grid(ls='--')
+plt.show()
